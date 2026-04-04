@@ -1,0 +1,39 @@
+{
+    "name": "local-date-kit",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "A modular toolkit for converting Gregorian dates into local calendar formats",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "dev": "nodemon --watch src --ext ts --exec \"tsc && node dist/index.js\"",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "date",
+        "calendar",
+        "local-calendar",
+        "bangla",
+        "arabic",
+        "india",
+        "japan",
+        "thailand",
+        "taiwan",
+        "conversion",
+        "typescript"
+    ],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.18.1",
+    "devDependencies": {
+        "nodemon": "^3.1.14",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3"
+    },
+    "ts-node": {
+        "esm": true,
+        "experimentalResolver": true,
+        "experimentalSpecifierResolution": "node"
+    }
+}
