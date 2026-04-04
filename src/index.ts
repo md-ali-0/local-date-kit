@@ -6,7 +6,7 @@ export { japaneseConverter, convertToJapaneseDate } from "./calendars/japanese/i
 export { thaiConverter, convertToThaiDate } from "./calendars/thai-buddhist/index.js";
 export { taiwanConverter, convertToTaiwanDate } from "./calendars/roc/index.js";
 
-export type { CalendarConverter, ConvertOptions, DateInput, LocalCalendarDate, OutputLanguage } from "./core/types.js";
+export type { CalendarConverter, ConvertOptions, DateInput, LocalCalendarDate } from "./core/types.js";
 export type { AnyLocalDate, SupportedCalendar } from "./registry.js";
 export type { ArabicDate } from "./calendars/hijri/index.js";
 export type { BanglaDate } from "./calendars/bangla/index.js";

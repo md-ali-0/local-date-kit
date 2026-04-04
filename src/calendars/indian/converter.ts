@@ -5,9 +5,10 @@ import type { IndianDate } from "./types.js";
 export const indianConverter = createIntlCalendarConverter({
   calendar: "indian",
   country: "India",
+  defaultLanguage: "hi",
   locales: {
     en: "en-IN-u-ca-indian",
-    native: "hi-IN-u-ca-indian",
+    hi: "hi-IN-u-ca-indian",
   },
   nativeName: "Saka",
 });

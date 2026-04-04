@@ -1,18 +1,19 @@
 export type DateInput = Date | string;
-export type OutputLanguage = "en" | "native";
 
 export interface ConvertOptions {
-  language?: OutputLanguage;
+  language?: string;
 }
 
 export interface LocalCalendarDate {
   country: string;
   calendar: string;
   nativeName: string;
-  language: OutputLanguage;
-  day: number;
+  language: string;
+  day: string;
+  dayNumber: number;
   month: string;
-  year: number;
+  year: string;
+  yearNumber: number;
 }
 
 export interface CalendarConverter<TDate extends LocalCalendarDate = LocalCalendarDate> {

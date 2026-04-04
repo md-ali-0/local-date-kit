@@ -22,3 +22,7 @@ export function parseInputDate(input: DateInput): Date {
 export function toUTCDate(date: Date): Date {
   return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
 }
+
+export function toLocalizedDigits(value: number, language: string): string {
+  return new Intl.NumberFormat(language).format(value);
+}

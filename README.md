@@ -17,9 +17,9 @@
 
 - Single API দিয়ে একাধিক calendar support
 - Specific calendar-এর জন্য direct converter function
-- English অথবা native language output support
+- English এবং calendar-specific language code output support
 - TypeScript-friendly typed return values
-- Returned result-এ `country`, `calendar`, `nativeName`, `language`, `day`, `month`, `year`
+- Returned result-এ `country`, `calendar`, `nativeName`, `language`, localized `day`/`year`, এবং raw `dayNumber`/`yearNumber`
 - Bare ISO date যেমন `2026-04-14` safe ভাবে parse করে
 - Registry-based architecture, তাই নতুন calendar add করা সহজ
 
@@ -53,9 +53,11 @@ Expected shape:
   calendar: "bangla",
   nativeName: "Bangabda",
   language: "en",
-  day: 1,
+  day: "1",
+  dayNumber: 1,
   month: "Boishakh",
-  year: 1433
+  year: "1433",
+  yearNumber: 1433
 }
 ```
 
@@ -76,16 +78,16 @@ const thai = convertDate("2026-04-14", "buddhist");
 const roc = convertDate("2026-04-14", "roc");
 ```
 
-### 1.1 Native language output
+### 1.1 Language code output
 
-যদি month name আর formatted result native language-এ চাও, তাহলে `options`-এ `language: "native"` দাও।
+যদি month name আর formatted result specific language code-এ চাও, তাহলে `options.language` ব্যবহার করো।
 
 ```ts
 import { convertDate } from "local-date-kit";
 
-const banglaNative = convertDate("2026-04-14", "bangla", { language: "native" });
-const hijriNative = convertDate("2026-04-14", "islamic", { language: "native" });
-const japaneseNative = convertDate("2026-04-14", "japanese", { language: "native" });
+const banglaNative = convertDate("2026-04-14", "bangla", { language: "bn" });
+const hijriNative = convertDate("2026-04-14", "islamic", { language: "ar" });
+const japaneseNative = convertDate("2026-04-14", "japanese", { language: "ja" });
 ```
 
 Example native Bangla output:
@@ -95,17 +97,25 @@ Example native Bangla output:
   country: "Bangladesh",
   calendar: "bangla",
   nativeName: "Bangabda",
-  language: "native",
-  day: 1,
+  language: "bn",
+  day: "১",
+  dayNumber: 1,
   month: "বৈশাখ",
-  year: 1433
+  year: "১৪৩৩",
+  yearNumber: 1433
 }
 ```
 
-Supported language options:
+Examples:
 
-- `en`
-- `native`
+- `bangla` -> `en`, `bn`
+- `islamic` -> `en`, `ar`
+- `indian` -> `en`, `hi`
+- `japanese` -> `en`, `ja`
+- `buddhist` -> `en`, `th`
+- `roc` -> `en`, `zh-TW`
+
+যদি unsupported language code দাও, package `en`-এ fallback করবে।
 
 ### 2. Specific converter functions
 
@@ -134,8 +144,8 @@ Language option direct converter-এও কাজ করবে:
 ```ts
 import { convertToBanglaDate, convertToArabicDate } from "local-date-kit";
 
-const bangla = convertToBanglaDate("2026-04-14", { language: "native" });
-const arabic = convertToArabicDate("2026-04-14", { language: "native" });
+const bangla = convertToBanglaDate("2026-04-14", { language: "bn" });
+const arabic = convertToArabicDate("2026-04-14", { language: "ar" });
 ```
 
 ### 3. Converter object use করা
@@ -146,7 +156,7 @@ const arabic = convertToArabicDate("2026-04-14", { language: "native" });
 import { getConverter } from "local-date-kit";
 
 const converter = getConverter("japanese");
-const result = converter.convert("2026-04-14", { language: "native" });
+const result = converter.convert("2026-04-14", { language: "ja" });
 ```
 
 ## Supported Calendar Keys
@@ -177,10 +187,12 @@ type LocalCalendarDate = {
   country: string;
   calendar: string;
   nativeName: string;
-  language: "en" | "native";
-  day: number;
+  language: string;
+  day: string;
+  dayNumber: number;
   month: string;
-  year: number;
+  year: string;
+  yearNumber: number;
 };
 ```
 
@@ -190,9 +202,11 @@ type LocalCalendarDate = {
 - `calendar`: internal calendar key
 - `nativeName`: calendar-এর familiar or native name
 - `language`: result কোন language mode-এ return হয়েছে
-- `day`: converted day
+- `day`: language অনুযায়ী localized day string
+- `dayNumber`: raw numeric day
 - `month`: converted month name
-- `year`: converted year
+- `year`: language অনুযায়ী localized year string
+- `yearNumber`: raw numeric year
 
 ## Input Format
 
@@ -207,7 +221,7 @@ Examples:
 convertDate(new Date(), "bangla");
 convertDate("2026-04-14", "bangla");
 convertDate("2026-04-14T10:30:00Z", "japanese");
-convertDate("2026-04-14", "bangla", { language: "native" });
+convertDate("2026-04-14", "bangla", { language: "bn" });
 ```
 
 ### Important note about string input
@@ -234,7 +248,6 @@ import type {
   ThaiDate,
   TaiwanDate,
   ConvertOptions,
-  OutputLanguage,
   SupportedCalendar,
 } from "local-date-kit";
 ```
@@ -252,14 +265,14 @@ const result: BanglaDate = convertToBanglaDate("2026-04-14");
 
 Default output language হলো `en`.
 
-Native mode-এ expected behavior:
+Language code examples:
 
-- Bangla -> Bengali month names
-- Islamic -> Arabic locale output
-- Indian -> Hindi locale output
-- Japanese -> Japanese locale output
-- Buddhist -> Thai locale output
-- ROC -> Traditional Chinese locale output
+- Bangla -> `bn`
+- Islamic -> `ar`
+- Indian -> `hi`
+- Japanese -> `ja`
+- Buddhist -> `th`
+- ROC -> `zh-TW`
 
 Example:
 
@@ -267,7 +280,7 @@ Example:
 import { convertDate } from "local-date-kit";
 
 const enResult = convertDate("2026-04-14", "bangla");
-const nativeResult = convertDate("2026-04-14", "bangla", { language: "native" });
+const banglaResult = convertDate("2026-04-14", "bangla", { language: "bn" });
 ```
 
 ## API Reference
@@ -280,7 +293,7 @@ Generic converter function.
 convertDate(
   input: Date | string,
   calendar: SupportedCalendar,
-  options?: { language?: "en" | "native" }
+  options?: { language?: string }
 )
 ```
 
@@ -295,7 +308,7 @@ getConverter(calendar: SupportedCalendar)
 Converter object-এও একই options support করে:
 
 ```ts
-converter.convert("2026-04-14", { language: "native" })
+converter.convert("2026-04-14", { language: "ja" })
 ```
 
 ### `listSupportedCalendars()`
@@ -412,7 +425,7 @@ pnpm dev
 - Bangla calendar custom logic দিয়ে implemented
 - বাকি কিছু calendar built-in `Intl.DateTimeFormat` calendar support ব্যবহার করে
 - Month names locale অনুযায়ী আসতে পারে
-- Native mode output environment-এর `Intl` support-এর উপর depend করে
+- Language-specific output environment-এর `Intl` support-এর উপর depend করে
 - Environment-specific `Intl` support অনুযায়ী formatting কিছু ক্ষেত্রে vary করতে পারে
 
 ## License

@@ -5,9 +5,10 @@ import type { TaiwanDate } from "./types.js";
 export const taiwanConverter = createIntlCalendarConverter({
   calendar: "roc",
   country: "Taiwan",
+  defaultLanguage: "zh-TW",
   locales: {
     en: "en-TW-u-ca-roc",
-    native: "zh-TW-u-ca-roc",
+    "zh-TW": "zh-TW-u-ca-roc",
   },
   nativeName: "Minguo",
 });

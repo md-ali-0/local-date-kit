@@ -1,5 +1,5 @@
-import type { CalendarConverter, ConvertOptions, DateInput, OutputLanguage } from "../../core/types.js";
-import { isLeapYear, parseInputDate, toUTCDate } from "../../core/utils.js";
+import type { CalendarConverter, ConvertOptions, DateInput } from "../../core/types.js";
+import { isLeapYear, parseInputDate, toLocalizedDigits, toUTCDate } from "../../core/utils.js";
 import type { BanglaDate } from "./types.js";
 
 const MONTHS = [
@@ -24,7 +24,8 @@ export function convertToBanglaDate(input: DateInput, options?: ConvertOptions):
     throw new Error("Invalid date input");
   }
 
-  const language: OutputLanguage = options?.language ?? "en";
+  const requestedLanguage = options?.language ?? "en";
+  const language = requestedLanguage === "bn" ? "bn" : "en";
 
   const utcDate = toUTCDate(date);
   const day = utcDate.getUTCDate();
@@ -61,9 +62,11 @@ export function convertToBanglaDate(input: DateInput, options?: ConvertOptions):
         calendar: "bangla",
         nativeName: "Bangabda",
         language,
-        day: remainingDays + 1,
-        month: monthDef[language],
-        year: banglaYear,
+        day: toLocalizedDigits(remainingDays + 1, language),
+        dayNumber: remainingDays + 1,
+        month: monthDef[language === "bn" ? "native" : "en"],
+        year: toLocalizedDigits(banglaYear, language),
+        yearNumber: banglaYear,
       };
     }
 

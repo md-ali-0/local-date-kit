@@ -5,9 +5,10 @@ import type { JapaneseDate } from "./types.js";
 export const japaneseConverter = createIntlCalendarConverter({
   calendar: "japanese",
   country: "Japan",
+  defaultLanguage: "ja",
   locales: {
     en: "en-JP-u-ca-japanese",
-    native: "ja-JP-u-ca-japanese",
+    ja: "ja-JP-u-ca-japanese",
   },
   nativeName: "Wareki",
 });

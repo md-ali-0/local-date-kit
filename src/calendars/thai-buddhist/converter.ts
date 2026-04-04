@@ -5,9 +5,10 @@ import type { ThaiDate } from "./types.js";
 export const thaiConverter = createIntlCalendarConverter({
   calendar: "buddhist",
   country: "Thailand",
+  defaultLanguage: "th",
   locales: {
     en: "en-TH-u-ca-buddhist",
-    native: "th-TH-u-ca-buddhist",
+    th: "th-TH-u-ca-buddhist",
   },
   nativeName: "Phutthasakkarat",
 });

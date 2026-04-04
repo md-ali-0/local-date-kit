@@ -1,10 +1,11 @@
-import type { CalendarConverter, ConvertOptions, DateInput, LocalCalendarDate, OutputLanguage } from "./types.js";
+import type { CalendarConverter, ConvertOptions, DateInput, LocalCalendarDate } from "./types.js";
 import { parseInputDate } from "./utils.js";
 
 interface IntlCalendarConfig<TCalendar extends string> {
   calendar: TCalendar;
   country: string;
-  locales: Record<OutputLanguage, string>;
+  defaultLanguage: string;
+  locales: Record<string, string>;
   nativeName: string;
 }
 
@@ -21,7 +22,16 @@ export function createIntlCalendarConverter<TCalendar extends string>(
       }
 
       const language = options?.language ?? "en";
-      const formatter = new Intl.DateTimeFormat(config.locales[language], {
+      const locale = config.locales[language] ?? config.locales.en ?? config.locales[config.defaultLanguage];
+      const resolvedLanguage = config.locales[language] ? language : config.locales.en ? "en" : config.defaultLanguage;
+
+      const formatter = new Intl.DateTimeFormat(locale, {
+        calendar: config.calendar,
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+      const numericFormatter = new Intl.DateTimeFormat(config.locales.en ?? config.locales[config.defaultLanguage], {
         calendar: config.calendar,
         day: "numeric",
         month: "long",
@@ -29,11 +39,14 @@ export function createIntlCalendarConverter<TCalendar extends string>(
       });
 
       const parts = formatter.formatToParts(date);
+      const numericParts = numericFormatter.formatToParts(date);
       const day = parts.find((part) => part.type === "day")?.value;
       const month = parts.find((part) => part.type === "month")?.value;
       const year = parts.find((part) => part.type === "year")?.value;
+      const numericDay = numericParts.find((part) => part.type === "day")?.value;
+      const numericYear = numericParts.find((part) => part.type === "year")?.value;
 
-      if (!day || !month || !year) {
+      if (!day || !month || !year || !numericDay || !numericYear) {
         throw new Error(`Unable to format ${config.calendar} calendar date`);
       }
 
@@ -41,10 +54,12 @@ export function createIntlCalendarConverter<TCalendar extends string>(
         country: config.country,
         calendar: config.calendar,
         nativeName: config.nativeName,
-        language,
-        day: Number(day),
+        language: resolvedLanguage,
+        day,
+        dayNumber: Number.parseInt(numericDay, 10),
         month,
-        year: Number(year),
+        year,
+        yearNumber: Number.parseInt(numericYear, 10),
       };
     },
   };

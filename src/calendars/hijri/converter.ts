@@ -5,9 +5,10 @@ import type { ArabicDate } from "./types.js";
 export const arabicConverter = createIntlCalendarConverter({
   calendar: "islamic",
   country: "Saudi Arabia",
+  defaultLanguage: "ar",
   locales: {
     en: "en-u-ca-islamic",
-    native: "ar-SA-u-ca-islamic",
+    ar: "ar-SA-u-ca-islamic",
   },
   nativeName: "Hijri",
 });
