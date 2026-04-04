@@ -1,31 +1,32 @@
-import type { CalendarConverter, DateInput, LocalCalendarDate } from "./types.js";
+import type { CalendarConverter, ConvertOptions, DateInput, LocalCalendarDate, OutputLanguage } from "./types.js";
 import { parseInputDate } from "./utils.js";
 
 interface IntlCalendarConfig<TCalendar extends string> {
   calendar: TCalendar;
   country: string;
-  locale: string;
+  locales: Record<OutputLanguage, string>;
   nativeName: string;
 }
 
 export function createIntlCalendarConverter<TCalendar extends string>(
   config: IntlCalendarConfig<TCalendar>
 ): CalendarConverter<LocalCalendarDate & { calendar: TCalendar }> {
-  const formatter = new Intl.DateTimeFormat(config.locale, {
-    calendar: config.calendar,
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
   return {
     calendar: config.calendar,
-    convert(input: DateInput) {
+    convert(input: DateInput, options?: ConvertOptions) {
       const date = parseInputDate(input);
 
       if (Number.isNaN(date.getTime())) {
         throw new Error("Invalid date input");
       }
+
+      const language = options?.language ?? "en";
+      const formatter = new Intl.DateTimeFormat(config.locales[language], {
+        calendar: config.calendar,
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
 
       const parts = formatter.formatToParts(date);
       const day = parts.find((part) => part.type === "day")?.value;
@@ -40,6 +41,7 @@ export function createIntlCalendarConverter<TCalendar extends string>(
         country: config.country,
         calendar: config.calendar,
         nativeName: config.nativeName,
+        language,
         day: Number(day),
         month,
         year: Number(year),

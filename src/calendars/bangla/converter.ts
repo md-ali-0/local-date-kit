@@ -1,28 +1,30 @@
-import type { CalendarConverter, DateInput } from "../../core/types.js";
+import type { CalendarConverter, ConvertOptions, DateInput, OutputLanguage } from "../../core/types.js";
 import { isLeapYear, parseInputDate, toUTCDate } from "../../core/utils.js";
 import type { BanglaDate } from "./types.js";
 
 const MONTHS = [
-  { name: "Boishakh", days: 31 },
-  { name: "Joishtho", days: 31 },
-  { name: "Ashar", days: 31 },
-  { name: "Srabon", days: 31 },
-  { name: "Bhadro", days: 31 },
-  { name: "Ashwin", days: 30 },
-  { name: "Kartik", days: 30 },
-  { name: "Agrahayan", days: 30 },
-  { name: "Poush", days: 30 },
-  { name: "Magh", days: 30 },
-  { name: "Falgun", days: 0 },
-  { name: "Chaitra", days: 30 },
+  { en: "Boishakh", native: "বৈশাখ", days: 31 },
+  { en: "Joishtho", native: "জ্যৈষ্ঠ", days: 31 },
+  { en: "Ashar", native: "আষাঢ়", days: 31 },
+  { en: "Srabon", native: "শ্রাবণ", days: 31 },
+  { en: "Bhadro", native: "ভাদ্র", days: 31 },
+  { en: "Ashwin", native: "আশ্বিন", days: 30 },
+  { en: "Kartik", native: "কার্তিক", days: 30 },
+  { en: "Agrahayan", native: "অগ্রহায়ণ", days: 30 },
+  { en: "Poush", native: "পৌষ", days: 30 },
+  { en: "Magh", native: "মাঘ", days: 30 },
+  { en: "Falgun", native: "ফাল্গুন", days: 0 },
+  { en: "Chaitra", native: "চৈত্র", days: 30 },
 ] as const;
 
-export function convertToBanglaDate(input: DateInput): BanglaDate {
+export function convertToBanglaDate(input: DateInput, options?: ConvertOptions): BanglaDate {
   const date = parseInputDate(input);
 
   if (Number.isNaN(date.getTime())) {
     throw new Error("Invalid date input");
   }
+
+  const language: OutputLanguage = options?.language ?? "en";
 
   const utcDate = toUTCDate(date);
   const day = utcDate.getUTCDate();
@@ -45,7 +47,7 @@ export function convertToBanglaDate(input: DateInput): BanglaDate {
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   const months = MONTHS.map((monthDef) =>
-    monthDef.name === "Falgun"
+    monthDef.en === "Falgun"
       ? { ...monthDef, days: isLeapYear(year) ? 30 : 29 }
       : monthDef
   );
@@ -58,8 +60,9 @@ export function convertToBanglaDate(input: DateInput): BanglaDate {
         country: "Bangladesh",
         calendar: "bangla",
         nativeName: "Bangabda",
+        language,
         day: remainingDays + 1,
-        month: monthDef.name,
+        month: monthDef[language],
         year: banglaYear,
       };
     }
