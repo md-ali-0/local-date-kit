@@ -8,6 +8,7 @@ export const japaneseConverter = createIntlCalendarConverter({
   defaultLanguage: "ja",
   locales: {
     en: "en-JP-u-ca-japanese",
+    bn: "bn-BD-u-ca-japanese",
     ja: "ja-JP-u-ca-japanese",
   },
   nativeName: "Wareki",

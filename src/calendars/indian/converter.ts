@@ -8,6 +8,7 @@ export const indianConverter = createIntlCalendarConverter({
   defaultLanguage: "hi",
   locales: {
     en: "en-IN-u-ca-indian",
+    bn: "bn-BD-u-ca-indian",
     hi: "hi-IN-u-ca-indian",
   },
   nativeName: "Saka",

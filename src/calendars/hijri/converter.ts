@@ -8,6 +8,7 @@ export const arabicConverter = createIntlCalendarConverter({
   defaultLanguage: "ar",
   locales: {
     en: "en-u-ca-islamic",
+    bn: "bn-BD-u-ca-islamic",
     ar: "ar-SA-u-ca-islamic",
   },
   nativeName: "Hijri",

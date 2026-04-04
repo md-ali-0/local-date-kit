@@ -8,6 +8,7 @@ export const taiwanConverter = createIntlCalendarConverter({
   defaultLanguage: "zh-TW",
   locales: {
     en: "en-TW-u-ca-roc",
+    bn: "bn-BD-u-ca-roc",
     "zh-TW": "zh-TW-u-ca-roc",
   },
   nativeName: "Minguo",

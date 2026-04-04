@@ -8,6 +8,7 @@ export const thaiConverter = createIntlCalendarConverter({
   defaultLanguage: "th",
   locales: {
     en: "en-TH-u-ca-buddhist",
+    bn: "bn-BD-u-ca-buddhist",
     th: "th-TH-u-ca-buddhist",
   },
   nativeName: "Phutthasakkarat",
