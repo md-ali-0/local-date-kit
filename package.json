@@ -36,6 +36,10 @@
     "bugs": {
         "url": "https://github.com/md-ali-0/local-date-kit/issues"
     },
+    "funding": {
+        "type": "individual",
+        "url": "https://md-ali.vercel.app"
+    },
     "keywords": [
         "date",
         "calendar",
@@ -54,6 +58,10 @@
     "engines": {
         "node": ">=18"
     },
+    "publishConfig": {
+        "access": "public"
+    },
+    "sideEffects": false,
     "devDependencies": {
         "nodemon": "^3.1.14",
         "ts-node": "^10.9.2",

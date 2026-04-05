@@ -1,6 +1,13 @@
 # local-date-kit
 
+[![npm version](https://img.shields.io/npm/v/local-date-kit.svg)](https://www.npmjs.com/package/local-date-kit)
+[![npm downloads](https://img.shields.io/npm/dw/local-date-kit.svg)](https://www.npmjs.com/package/local-date-kit)
+[![CI](https://github.com/md-ali-0/local-date-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/md-ali-0/local-date-kit/actions/workflows/ci.yml)
+[![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)](./LICENSE)
+
 `local-date-kit` is a TypeScript package for converting Gregorian dates into local calendar formats with language-aware output.
+
+It is built for product UIs that need ready-to-render local calendar dates instead of raw date math.
 
 It is designed for apps that need:
 
@@ -21,6 +28,13 @@ It is designed for apps that need:
 - Raw numeric values via `dayNumber` and `yearNumber`
 - Safe parsing for bare ISO input like `"2026-04-14"`
 - Structured output that works well in UI rendering
+
+## Best For
+
+- news sites that show Bangla date alongside Hijri date
+- dashboard widgets and calendars
+- Bengali-language products that need localized numerals
+- apps that need one data shape across multiple calendars
 
 ## Installation
 
@@ -60,6 +74,17 @@ Example output:
 }
 ```
 
+## Why This Package
+
+Most date libraries give you a Gregorian-first workflow.
+
+`local-date-kit` focuses on:
+
+- local calendar output
+- language-aware display values
+- frontend-friendly result objects
+- Bangladesh-facing Bangla and Hijri expectations
+
 ## Supported Calendars
 
 Use these keys with `convertDate(input, calendar, options)`:
@@ -92,6 +117,12 @@ const indian = convertDate("2026-04-14", "indian", { language: "hi" });
 const japanese = convertDate("2026-04-14", "japanese", { language: "ja" });
 const thai = convertDate("2026-04-14", "buddhist", { language: "th" });
 const roc = convertDate("2026-04-14", "roc", { language: "zh-TW" });
+```
+
+You can render these values directly in UI:
+
+```ts
+const label = `${bangla.day} ${bangla.month} ${bangla.year}`;
 ```
 
 ### Direct Converter Functions
@@ -276,6 +307,20 @@ listSupportedCalendars(): SupportedCalendar[]
 isSupportedCalendar(value: string): boolean
 ```
 
+## UI Example
+
+```ts
+import { convertDate } from "local-date-kit";
+
+const banglaDate = convertDate("2026-04-04", "bangla", { language: "bn" });
+const hijriDate = convertDate("2026-04-04", "islamic", { language: "bn" });
+
+const label = `${banglaDate.day} ${banglaDate.month} ${banglaDate.year}, ${hijriDate.day} ${hijriDate.month} ${hijriDate.year}`;
+
+console.log(label);
+// ২১ চৈত্র ১৪৩২, ১৫ শাওয়াল ১৪৪৭
+```
+
 ## Calendar Notes
 
 - Bangla output is tuned for Bangladesh-facing expectations
@@ -319,6 +364,12 @@ Mohammad Ali
 Full-Stack Developer  
 Website: https://md-ali.vercel.app  
 Email: md.ali.office@gmail.com
+
+## Links
+
+- Portfolio: https://md-ali.vercel.app
+- npm: https://www.npmjs.com/package/local-date-kit
+- GitHub: https://github.com/md-ali-0/local-date-kit
 
 ## License
 
