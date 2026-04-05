@@ -4,36 +4,59 @@
     "type": "module",
     "description": "A modular toolkit for converting Gregorian dates into local calendar formats",
     "main": "dist/index.js",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
     "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
     "scripts": {
         "build": "tsc",
         "dev": "nodemon --watch src --ext ts --exec \"tsc && node dist/index.js\"",
+        "prepublishOnly": "tsc",
         "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": {
+        "name": "Mohammad Ali",
+        "email": "md.ali.office@gmail.com",
+        "url": "https://md-ali.vercel.app"
+    },
+    "license": "ISC",
+    "homepage": "https://github.com/md-ali-0/local-date-kit#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/md-ali-0/local-date-kit.git"
+    },
+    "bugs": {
+        "url": "https://github.com/md-ali-0/local-date-kit/issues"
     },
     "keywords": [
         "date",
         "calendar",
         "local-calendar",
         "bangla",
-        "arabic",
-        "india",
-        "japan",
-        "thailand",
-        "taiwan",
-        "conversion",
+        "hijri",
+        "islamic",
+        "indian",
+        "japanese",
+        "thai-buddhist",
+        "roc",
+        "date-conversion",
         "typescript"
     ],
-    "author": "",
-    "license": "ISC",
     "packageManager": "pnpm@10.18.1",
+    "engines": {
+        "node": ">=18"
+    },
     "devDependencies": {
         "nodemon": "^3.1.14",
         "ts-node": "^10.9.2",
         "typescript": "^5.9.3"
-    },
-    "ts-node": {
-        "esm": true,
-        "experimentalResolver": true,
-        "experimentalSpecifierResolution": "node"
     }
 }

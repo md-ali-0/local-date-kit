@@ -1,36 +1,34 @@
 # local-date-kit
 
-`local-date-kit` হলো Gregorian date থেকে বিভিন্ন local calendar date-এ convert করার একটি modular TypeScript package।
+`local-date-kit` is a TypeScript package for converting Gregorian dates into local calendar formats with language-aware output.
 
-এখন package-এ built-in support আছে:
+It is designed for apps that need:
 
-- Bangla calendar
-- Hijri / Islamic calendar
-- Indian calendar
-- Japanese calendar
-- Thai Buddhist calendar
-- ROC calendar
+- Bangla calendar support
+- Hijri / Islamic date support
+- Indian calendar support
+- Japanese calendar support
+- Thai Buddhist calendar support
+- ROC calendar support
+- localized month, day, and year strings
 
-এই package এমনভাবে সাজানো হয়েছে যাতে future-এ নতুন local date converter সহজে add করা যায়।
+## Highlights
 
-## Features
+- One generic `convertDate()` API for all supported calendars
+- Direct calendar-specific converter functions
+- Language-code based output such as `en`, `bn`, `ar`, `hi`, `ja`, `th`, and `zh-TW`
+- Localized digits for `day` and `year`
+- Raw numeric values via `dayNumber` and `yearNumber`
+- Safe parsing for bare ISO input like `"2026-04-14"`
+- Structured output that works well in UI rendering
 
-- Single API দিয়ে একাধিক calendar support
-- Specific calendar-এর জন্য direct converter function
-- English এবং calendar-specific language code output support
-- TypeScript-friendly typed return values
-- Returned result-এ `country`, `calendar`, `nativeName`, `language`, localized `day`/`year`, এবং raw `dayNumber`/`yearNumber`
-- Bangla/Hijri output Bangladesh-facing expected dates অনুযায়ী tuned
-- Bare ISO date যেমন `2026-04-14` safe ভাবে parse করে
-- Registry-based architecture, তাই নতুন calendar add করা সহজ
-
-## Install
+## Installation
 
 ```bash
 pnpm add local-date-kit
 ```
 
-অথবা
+or
 
 ```bash
 npm install local-date-kit
@@ -41,57 +39,12 @@ npm install local-date-kit
 ```ts
 import { convertDate } from "local-date-kit";
 
-const result = convertDate("2026-04-14", "bangla");
+const banglaDate = convertDate("2026-04-04", "bangla", { language: "bn" });
 
-console.log(result);
+console.log(banglaDate);
 ```
 
-Expected shape:
-
-```ts
-{
-  country: "Bangladesh",
-  calendar: "bangla",
-  nativeName: "Bangabda",
-  language: "en",
-  day: "1",
-  dayNumber: 1,
-  month: "Boishakh",
-  year: "1433",
-  yearNumber: 1433
-}
-```
-
-## Basic Usage
-
-### 1. Generic converter
-
-যদি runtime-এ calendar key দিয়ে conversion করতে চাও, তাহলে `convertDate()` ব্যবহার করো।
-
-```ts
-import { convertDate } from "local-date-kit";
-
-const bangla = convertDate("2026-04-14", "bangla");
-const hijri = convertDate("2026-04-14", "islamic");
-const indian = convertDate("2026-04-14", "indian");
-const japanese = convertDate("2026-04-14", "japanese");
-const thai = convertDate("2026-04-14", "buddhist");
-const roc = convertDate("2026-04-14", "roc");
-```
-
-### 1.1 Language code output
-
-যদি month name আর formatted result specific language code-এ চাও, তাহলে `options.language` ব্যবহার করো।
-
-```ts
-import { convertDate } from "local-date-kit";
-
-const banglaNative = convertDate("2026-04-14", "bangla", { language: "bn" });
-const hijriNative = convertDate("2026-04-14", "islamic", { language: "ar" });
-const japaneseNative = convertDate("2026-04-14", "japanese", { language: "ja" });
-```
-
-Example native Bangla output:
+Example output:
 
 ```ts
 {
@@ -99,26 +52,93 @@ Example native Bangla output:
   calendar: "bangla",
   nativeName: "Bangabda",
   language: "bn",
-  day: "১",
-  dayNumber: 1,
-  month: "বৈশাখ",
-  year: "১৪৩৩",
-  yearNumber: 1433
+  day: "২১",
+  dayNumber: 21,
+  month: "চৈত্র",
+  year: "১৪৩২",
+  yearNumber: 1432
 }
 ```
 
-Examples:
+## Supported Calendars
 
-- `bangla` -> `en`, `bn`
-- `islamic` -> `en`, `ar`
-- `indian` -> `en`, `hi`
-- `japanese` -> `en`, `ja`
-- `buddhist` -> `en`, `th`
-- `roc` -> `en`, `zh-TW`
+Use these keys with `convertDate(input, calendar, options)`:
 
-যদি unsupported language code দাও, package `en`-এ fallback করবে।
+- `bangla`
+- `islamic`
+- `indian`
+- `japanese`
+- `buddhist`
+- `roc`
 
-### 1.2 Bangladesh-facing examples
+You can also get the list at runtime:
+
+```ts
+import { listSupportedCalendars } from "local-date-kit";
+
+console.log(listSupportedCalendars());
+```
+
+## Basic Usage
+
+### Generic API
+
+```ts
+import { convertDate } from "local-date-kit";
+
+const bangla = convertDate("2026-04-04", "bangla", { language: "bn" });
+const hijri = convertDate("2026-04-04", "islamic", { language: "bn" });
+const indian = convertDate("2026-04-14", "indian", { language: "hi" });
+const japanese = convertDate("2026-04-14", "japanese", { language: "ja" });
+const thai = convertDate("2026-04-14", "buddhist", { language: "th" });
+const roc = convertDate("2026-04-14", "roc", { language: "zh-TW" });
+```
+
+### Direct Converter Functions
+
+```ts
+import {
+  convertToBanglaDate,
+  convertToArabicDate,
+  convertToIndianDate,
+  convertToJapaneseDate,
+  convertToThaiDate,
+  convertToTaiwanDate,
+} from "local-date-kit";
+
+const bangla = convertToBanglaDate("2026-04-04", { language: "bn" });
+const hijri = convertToArabicDate("2026-04-04", { language: "bn" });
+const indian = convertToIndianDate("2026-04-14", { language: "hi" });
+const japanese = convertToJapaneseDate("2026-04-14", { language: "ja" });
+const thai = convertToThaiDate("2026-04-14", { language: "th" });
+const roc = convertToTaiwanDate("2026-04-14", { language: "zh-TW" });
+```
+
+### Converter Object
+
+```ts
+import { getConverter } from "local-date-kit";
+
+const converter = getConverter("japanese");
+const result = converter.convert("2026-04-14", { language: "ja" });
+```
+
+## Language Support
+
+The package uses language codes instead of a special `native` mode.
+
+Common examples:
+
+- Bangla calendar: `en`, `bn`
+- Islamic calendar: `en`, `bn`, `ar`
+- Indian calendar: `en`, `bn`, `hi`
+- Japanese calendar: `en`, `bn`, `ja`
+- Thai Buddhist calendar: `en`, `bn`, `th`
+- ROC calendar: `en`, `bn`, `zh-TW`
+
+If a language code is not mapped for a calendar, the package falls back to `en`.
+
+### Bangladesh-Facing Example
 
 ```ts
 import { convertDate } from "local-date-kit";
@@ -143,70 +163,9 @@ Expected style of output:
 }
 ```
 
-### 2. Specific converter functions
+## Return Format
 
-যদি direct specific calendar converter use করতে চাও, তাহলে named export function ব্যবহার করতে পারো।
-
-```ts
-import {
-  convertToBanglaDate,
-  convertToArabicDate,
-  convertToIndianDate,
-  convertToJapaneseDate,
-  convertToThaiDate,
-  convertToTaiwanDate,
-} from "local-date-kit";
-
-const bangla = convertToBanglaDate("2026-04-14");
-const arabic = convertToArabicDate("2026-04-14");
-const indian = convertToIndianDate("2026-04-14");
-const japanese = convertToJapaneseDate("2026-04-14");
-const thai = convertToThaiDate("2026-04-14");
-const taiwan = convertToTaiwanDate("2026-04-14");
-```
-
-Language option direct converter-এও কাজ করবে:
-
-```ts
-import { convertToBanglaDate, convertToArabicDate } from "local-date-kit";
-
-const bangla = convertToBanglaDate("2026-04-14", { language: "bn" });
-const arabic = convertToArabicDate("2026-04-14", { language: "ar" });
-```
-
-### 3. Converter object use করা
-
-যদি converter object registry-style use করতে চাও:
-
-```ts
-import { getConverter } from "local-date-kit";
-
-const converter = getConverter("japanese");
-const result = converter.convert("2026-04-14", { language: "ja" });
-```
-
-## Supported Calendar Keys
-
-`convertDate(input, calendar)`-এ বর্তমানে এই keys use করা যাবে:
-
-- `bangla`
-- `islamic`
-- `indian`
-- `japanese`
-- `buddhist`
-- `roc`
-
-তালিকা runtime-এ পেতে:
-
-```ts
-import { listSupportedCalendars } from "local-date-kit";
-
-console.log(listSupportedCalendars());
-```
-
-## Output Format
-
-সব converter সাধারণত এই shape-এর object return করে:
+All converters return an object similar to this:
 
 ```ts
 type LocalCalendarDate = {
@@ -222,21 +181,21 @@ type LocalCalendarDate = {
 };
 ```
 
-### Field meaning
+### Field Reference
 
-- `country`: converter যে country/context represent করছে
+- `country`: country or cultural context of the calendar
 - `calendar`: internal calendar key
-- `nativeName`: calendar-এর familiar or native name
-- `language`: result কোন language mode-এ return হয়েছে
-- `day`: language অনুযায়ী localized day string
+- `nativeName`: familiar calendar name
+- `language`: resolved output language
+- `day`: localized day string
 - `dayNumber`: raw numeric day
-- `month`: converted month name
-- `year`: language অনুযায়ী localized year string
+- `month`: localized month name
+- `year`: localized year string
 - `yearNumber`: raw numeric year
 
-## Input Format
+## Input
 
-Package দুই ধরনের input accept করে:
+Accepted input types:
 
 - `Date`
 - `string`
@@ -247,34 +206,34 @@ Examples:
 convertDate(new Date(), "bangla");
 convertDate("2026-04-14", "bangla");
 convertDate("2026-04-14T10:30:00Z", "japanese");
-convertDate("2026-04-14", "bangla", { language: "bn" });
+convertDate("2026-04-04", "islamic", { language: "bn" });
 ```
 
-### Important note about string input
+### ISO Date Parsing
 
-Bare ISO date যেমন `"2026-04-14"` package calendar date হিসেবে parse করে, timezone-shifted timestamp হিসেবে না।  
-এতে date conversion predictable থাকে।
+Bare ISO strings like `"2026-04-14"` are treated as calendar dates, not timezone-shifted timestamps.
 
-Invalid input দিলে error throw করবে:
+If the input is invalid, the converter throws an error:
 
 ```ts
 convertDate("not-a-date", "bangla");
 ```
 
-## TypeScript Usage
-
-Package typed exports দেয়।
+## TypeScript
 
 ```ts
 import type {
-  BanglaDate,
   ArabicDate,
+  BanglaDate,
+  CalendarConverter,
+  ConvertOptions,
+  DateInput,
   IndianDate,
   JapaneseDate,
-  ThaiDate,
-  TaiwanDate,
-  ConvertOptions,
+  LocalCalendarDate,
   SupportedCalendar,
+  TaiwanDate,
+  ThaiDate,
 } from "local-date-kit";
 ```
 
@@ -284,36 +243,12 @@ Example:
 import { convertToBanglaDate } from "local-date-kit";
 import type { BanglaDate } from "local-date-kit";
 
-const result: BanglaDate = convertToBanglaDate("2026-04-14");
+const result: BanglaDate = convertToBanglaDate("2026-04-04", { language: "bn" });
 ```
 
-## Language Behavior
-
-Default output language হলো `en`.
-
-Language code examples:
-
-- Bangla -> `bn`
-- Islamic -> `ar`
-- Indian -> `hi`
-- Japanese -> `ja`
-- Buddhist -> `th`
-- ROC -> `zh-TW`
-
-Example:
-
-```ts
-import { convertDate } from "local-date-kit";
-
-const enResult = convertDate("2026-04-14", "bangla");
-const banglaResult = convertDate("2026-04-14", "bangla", { language: "bn" });
-```
-
-## API Reference
+## API
 
 ### `convertDate(input, calendar, options?)`
-
-Generic converter function.
 
 ```ts
 convertDate(
@@ -325,21 +260,11 @@ convertDate(
 
 ### `getConverter(calendar)`
 
-Specific calendar converter object return করে।
-
 ```ts
 getConverter(calendar: SupportedCalendar)
 ```
 
-Converter object-এও একই options support করে:
-
-```ts
-converter.convert("2026-04-14", { language: "ja" })
-```
-
 ### `listSupportedCalendars()`
-
-Supported calendar key-এর array return করে।
 
 ```ts
 listSupportedCalendars(): SupportedCalendar[]
@@ -347,34 +272,16 @@ listSupportedCalendars(): SupportedCalendar[]
 
 ### `isSupportedCalendar(value)`
 
-String valid supported calendar কি না check করে।
-
 ```ts
 isSupportedCalendar(value: string): boolean
 ```
 
-Example:
+## Calendar Notes
 
-```ts
-import { isSupportedCalendar, convertDate } from "local-date-kit";
-
-const calendar = "bangla";
-
-if (isSupportedCalendar(calendar)) {
-  console.log(convertDate("2026-04-14", calendar));
-}
-```
-
-## Calendar Mapping
-
-বর্তমানে package-এর calendar mapping:
-
-- Bangladesh -> `bangla` -> `Bangabda`
-- Saudi Arabia -> `islamic` -> `Hijri`
-- India -> `indian` -> `Saka`
-- Japan -> `japanese` -> `Wareki`
-- Thailand -> `buddhist` -> `Phutthasakkarat`
-- Taiwan -> `roc` -> `Minguo`
+- Bangla output is tuned for Bangladesh-facing expectations
+- Hijri output is also tuned for Bangladesh-facing expectations in this package
+- Bangla day and year strings never use grouping commas
+- Some calendars rely on `Intl.DateTimeFormat`, so formatting can vary slightly depending on environment support
 
 ## Project Structure
 
@@ -392,71 +299,26 @@ src/
   index.ts
 ```
 
-## Adding a New Calendar
-
-Future-এ নতুন calendar add করতে এই pattern follow করো:
-
-1. `src/calendars/<calendar-name>/types.ts`
-2. `src/calendars/<calendar-name>/converter.ts`
-3. `src/calendars/<calendar-name>/index.ts`
-4. `src/registry.ts`-এ register করো
-5. `src/index.ts`-এ export করো
-
-### Example outline
-
-```ts
-// src/calendars/example/converter.ts
-import type { CalendarConverter } from "../../core/types.js";
-
-export const exampleConverter: CalendarConverter = {
-  calendar: "example",
-  convert(input, options) {
-    return {
-      country: "Example",
-      calendar: "example",
-      nativeName: "Example Calendar",
-      language: options?.language ?? "en",
-      day: "1",
-      dayNumber: 1,
-      month: "Month",
-      year: "1000",
-      yearNumber: 1000,
-    };
-  },
-};
-```
-
-তারপর `registry.ts`-এ add করো:
-
-```ts
-const converters = {
-  example: exampleConverter,
-};
-```
-
 ## Development
 
-Project build:
+Build:
 
 ```bash
 pnpm build
 ```
 
-Watch/dev mode:
+Dev mode:
 
 ```bash
 pnpm dev
 ```
 
-## Notes
+## Author
 
-- Bangla calendar custom logic দিয়ে implemented
-- Bangla year/day string-এ grouping comma use করা হয় না
-- Bangla এবং Hijri output Bangladesh-facing expected dates অনুযায়ী tuned
-- বাকি কিছু calendar built-in `Intl.DateTimeFormat` calendar support ব্যবহার করে
-- Month names locale অনুযায়ী আসতে পারে
-- Language-specific output environment-এর `Intl` support-এর উপর depend করে
-- Environment-specific `Intl` support অনুযায়ী formatting কিছু ক্ষেত্রে vary করতে পারে
+Mohammad Ali  
+Full-Stack Developer  
+Website: https://md-ali.vercel.app  
+Email: md.ali.office@gmail.com
 
 ## License
 
