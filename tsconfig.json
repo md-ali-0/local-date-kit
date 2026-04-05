@@ -14,8 +14,8 @@
 
     /* Output */
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "declarationMap": false,
+    "sourceMap": false,
 
     /* Strictness */
     "strict": true,

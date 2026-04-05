@@ -17,9 +17,10 @@
         "LICENSE"
     ],
     "scripts": {
-        "build": "tsc",
-        "dev": "nodemon --watch src --ext ts --exec \"tsc && node dist/index.js\"",
-        "prepublishOnly": "tsc",
+        "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+        "build": "pnpm run clean && tsc",
+        "dev": "nodemon --watch src --ext ts --exec \"pnpm run build && node dist/index.js\"",
+        "prepublishOnly": "pnpm run build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": {
