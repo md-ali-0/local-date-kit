@@ -20,6 +20,7 @@
 - English এবং calendar-specific language code output support
 - TypeScript-friendly typed return values
 - Returned result-এ `country`, `calendar`, `nativeName`, `language`, localized `day`/`year`, এবং raw `dayNumber`/`yearNumber`
+- Bangla/Hijri output Bangladesh-facing expected dates অনুযায়ী tuned
 - Bare ISO date যেমন `2026-04-14` safe ভাবে parse করে
 - Registry-based architecture, তাই নতুন calendar add করা সহজ
 
@@ -116,6 +117,31 @@ Examples:
 - `roc` -> `en`, `zh-TW`
 
 যদি unsupported language code দাও, package `en`-এ fallback করবে।
+
+### 1.2 Bangladesh-facing examples
+
+```ts
+import { convertDate } from "local-date-kit";
+
+const bangla = convertDate("2026-04-04", "bangla", { language: "bn" });
+const hijri = convertDate("2026-04-04", "islamic", { language: "bn" });
+```
+
+Expected style of output:
+
+```ts
+{
+  day: "২১",
+  month: "চৈত্র",
+  year: "১৪৩২"
+}
+
+{
+  day: "১৫",
+  month: "শাওয়াল",
+  year: "১৪৪৭"
+}
+```
 
 ### 2. Specific converter functions
 
@@ -390,9 +416,11 @@ export const exampleConverter: CalendarConverter = {
       calendar: "example",
       nativeName: "Example Calendar",
       language: options?.language ?? "en",
-      day: 1,
+      day: "1",
+      dayNumber: 1,
       month: "Month",
-      year: 1000,
+      year: "1000",
+      yearNumber: 1000,
     };
   },
 };
@@ -423,6 +451,8 @@ pnpm dev
 ## Notes
 
 - Bangla calendar custom logic দিয়ে implemented
+- Bangla year/day string-এ grouping comma use করা হয় না
+- Bangla এবং Hijri output Bangladesh-facing expected dates অনুযায়ী tuned
 - বাকি কিছু calendar built-in `Intl.DateTimeFormat` calendar support ব্যবহার করে
 - Month names locale অনুযায়ী আসতে পারে
 - Language-specific output environment-এর `Intl` support-এর উপর depend করে

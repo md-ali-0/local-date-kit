@@ -24,5 +24,5 @@ export function toUTCDate(date: Date): Date {
 }
 
 export function toLocalizedDigits(value: number, language: string): string {
-  return new Intl.NumberFormat(language).format(value);
+  return new Intl.NumberFormat(language, { useGrouping: false }).format(value);
 }
