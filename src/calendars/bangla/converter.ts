@@ -1,5 +1,5 @@
-import type { CalendarConverter, ConvertOptions, DateInput } from "../../core/types.js";
-import { isLeapYear, parseInputDate, toLocalizedDigits, toUTCDate } from "../../core/utils.js";
+import type { CalendarConverter, ConvertOptionInput, DateInput } from "../../core/types.js";
+import { isLeapYear, normalizeConvertOptions, parseInputDate, toLocalizedDigits, toUTCDate } from "../../core/utils.js";
 import type { BanglaDate } from "./types.js";
 
 const MONTHS = [
@@ -17,14 +17,14 @@ const MONTHS = [
   { en: "Chaitra", native: "চৈত্র", days: 30 },
 ] as const;
 
-export function convertToBanglaDate(input: DateInput, options?: ConvertOptions): BanglaDate {
+export function convertToBanglaDate(input: DateInput, options?: ConvertOptionInput): BanglaDate {
   const date = parseInputDate(input);
 
   if (Number.isNaN(date.getTime())) {
     throw new Error("Invalid date input");
   }
 
-  const requestedLanguage = options?.language ?? "en";
+  const requestedLanguage = normalizeConvertOptions(options).language ?? "en";
   const language = requestedLanguage === "bn" ? "bn" : "en";
 
   const utcDate = toUTCDate(date);

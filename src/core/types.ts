@@ -4,6 +4,8 @@ export interface ConvertOptions {
   language?: string;
 }
 
+export type ConvertOptionInput = ConvertOptions | string;
+
 export interface LocalCalendarDate {
   country: string;
   calendar: string;
@@ -18,5 +20,5 @@ export interface LocalCalendarDate {
 
 export interface CalendarConverter<TDate extends LocalCalendarDate = LocalCalendarDate> {
   calendar: string;
-  convert(input: DateInput, options?: ConvertOptions): TDate;
+  convert(input: DateInput, options?: ConvertOptionInput): TDate;
 }

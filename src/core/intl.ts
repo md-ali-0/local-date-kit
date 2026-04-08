@@ -1,5 +1,5 @@
-import type { CalendarConverter, ConvertOptions, DateInput, LocalCalendarDate } from "./types.js";
-import { parseInputDate } from "./utils.js";
+import type { CalendarConverter, ConvertOptionInput, DateInput, LocalCalendarDate } from "./types.js";
+import { normalizeConvertOptions, parseInputDate } from "./utils.js";
 
 interface IntlCalendarConfig<TCalendar extends string> {
   calendar: TCalendar;
@@ -7,6 +7,7 @@ interface IntlCalendarConfig<TCalendar extends string> {
   defaultLanguage: string;
   locales: Record<string, string>;
   nativeName: string;
+  adjustDate?: (date: Date) => Date;
 }
 
 export function createIntlCalendarConverter<TCalendar extends string>(
@@ -14,14 +15,17 @@ export function createIntlCalendarConverter<TCalendar extends string>(
 ): CalendarConverter<LocalCalendarDate & { calendar: TCalendar }> {
   return {
     calendar: config.calendar,
-    convert(input: DateInput, options?: ConvertOptions) {
+    convert(input: DateInput, options?: ConvertOptionInput) {
       const date = parseInputDate(input);
 
       if (Number.isNaN(date.getTime())) {
         throw new Error("Invalid date input");
       }
 
-      const language = options?.language ?? "en";
+      const adjustedDate = config.adjustDate ? config.adjustDate(new Date(date)) : date;
+
+      const normalizedOptions = normalizeConvertOptions(options);
+      const language = normalizedOptions.language ?? "en";
       const locale = config.locales[language] ?? config.locales.en ?? config.locales[config.defaultLanguage];
       const resolvedLanguage = config.locales[language] ? language : config.locales.en ? "en" : config.defaultLanguage;
 
@@ -38,8 +42,8 @@ export function createIntlCalendarConverter<TCalendar extends string>(
         year: "numeric",
       });
 
-      const parts = formatter.formatToParts(date);
-      const numericParts = numericFormatter.formatToParts(date);
+      const parts = formatter.formatToParts(adjustedDate);
+      const numericParts = numericFormatter.formatToParts(adjustedDate);
       const day = parts.find((part) => part.type === "day")?.value;
       const month = parts.find((part) => part.type === "month")?.value;
       const year = parts.find((part) => part.type === "year")?.value;

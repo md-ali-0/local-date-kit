@@ -1,12 +1,23 @@
-import type { CalendarConverter, ConvertOptions, DateInput, LocalCalendarDate } from "./core/types.js";
+import type { CalendarConverter, ConvertOptionInput, DateInput, LocalCalendarDate } from "./core/types.js";
 import { arabicConverter } from "./calendars/hijri/index.js";
 import { banglaConverter } from "./calendars/bangla/index.js";
+import { englishConverter } from "./calendars/english/index.js";
 import { indianConverter } from "./calendars/indian/index.js";
 import { japaneseConverter } from "./calendars/japanese/index.js";
 import { thaiConverter } from "./calendars/thai-buddhist/index.js";
 import { taiwanConverter } from "./calendars/roc/index.js";
 
 const converters = {
+  english: {
+    ...englishConverter,
+    calendar: "english",
+    convert(input: DateInput, options?: ConvertOptionInput) {
+      return {
+        ...englishConverter.convert(input, options),
+        calendar: "english",
+      };
+    },
+  },
   islamic: arabicConverter,
   bangla: banglaConverter,
   indian: indianConverter,
@@ -26,7 +37,7 @@ export function getConverter<TCalendar extends SupportedCalendar>(
 export function convertDate<TCalendar extends SupportedCalendar>(
   input: DateInput,
   calendar: TCalendar,
-  options?: ConvertOptions
+  options?: ConvertOptionInput
 ): ReturnType<(typeof converters)[TCalendar]["convert"]> {
   const converter = getConverter(calendar);
   return converter.convert(input, options) as ReturnType<(typeof converters)[TCalendar]["convert"]>;

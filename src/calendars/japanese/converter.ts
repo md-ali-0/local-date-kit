@@ -1,5 +1,5 @@
 import { createIntlCalendarConverter } from "../../core/intl.js";
-import type { ConvertOptions, DateInput } from "../../core/types.js";
+import type { ConvertOptionInput, DateInput } from "../../core/types.js";
 import type { JapaneseDate } from "./types.js";
 
 export const japaneseConverter = createIntlCalendarConverter({
@@ -14,6 +14,6 @@ export const japaneseConverter = createIntlCalendarConverter({
   nativeName: "Wareki",
 });
 
-export function convertToJapaneseDate(input: DateInput, options?: ConvertOptions): JapaneseDate {
+export function convertToJapaneseDate(input: DateInput, options?: ConvertOptionInput): JapaneseDate {
   return japaneseConverter.convert(input, options) as JapaneseDate;
 }

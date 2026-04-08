@@ -1,5 +1,5 @@
 import { createIntlCalendarConverter } from "../../core/intl.js";
-import type { ConvertOptions, DateInput } from "../../core/types.js";
+import type { ConvertOptionInput, DateInput } from "../../core/types.js";
 import type { TaiwanDate } from "./types.js";
 
 export const taiwanConverter = createIntlCalendarConverter({
@@ -14,6 +14,6 @@ export const taiwanConverter = createIntlCalendarConverter({
   nativeName: "Minguo",
 });
 
-export function convertToTaiwanDate(input: DateInput, options?: ConvertOptions): TaiwanDate {
+export function convertToTaiwanDate(input: DateInput, options?: ConvertOptionInput): TaiwanDate {
   return taiwanConverter.convert(input, options) as TaiwanDate;
 }

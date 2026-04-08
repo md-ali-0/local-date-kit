@@ -1,4 +1,4 @@
-import type { DateInput } from "./types.js";
+import type { ConvertOptionInput, ConvertOptions, DateInput } from "./types.js";
 
 export function isLeapYear(year: number): boolean {
   return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
@@ -25,4 +25,12 @@ export function toUTCDate(date: Date): Date {
 
 export function toLocalizedDigits(value: number, language: string): string {
   return new Intl.NumberFormat(language, { useGrouping: false }).format(value);
+}
+
+export function normalizeConvertOptions(options?: ConvertOptionInput): ConvertOptions {
+  if (typeof options === "string") {
+    return { language: options };
+  }
+
+  return options ?? {};
 }

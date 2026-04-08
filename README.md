@@ -11,6 +11,7 @@ It is built for product UIs that need ready-to-render local calendar dates inste
 
 It is designed for apps that need:
 
+- English / Gregorian date support
 - Bangla calendar support
 - Hijri / Islamic date support
 - Indian calendar support
@@ -90,6 +91,7 @@ Most date libraries give you a Gregorian-first workflow.
 Use these keys with `convertDate(input, calendar, options)`:
 
 - `bangla`
+- `english`
 - `islamic`
 - `indian`
 - `japanese`
@@ -112,7 +114,8 @@ console.log(listSupportedCalendars());
 import { convertDate } from "local-date-kit";
 
 const bangla = convertDate("2026-04-04", "bangla", { language: "bn" });
-const hijri = convertDate("2026-04-04", "islamic", { language: "bn" });
+const english = convertDate("2026-04-08", "english", "bn");
+const hijri = convertDate("2026-04-08", "islamic", { language: "bn" });
 const indian = convertDate("2026-04-14", "indian", { language: "hi" });
 const japanese = convertDate("2026-04-14", "japanese", { language: "ja" });
 const thai = convertDate("2026-04-14", "buddhist", { language: "th" });
@@ -130,6 +133,7 @@ const label = `${bangla.day} ${bangla.month} ${bangla.year}`;
 ```ts
 import {
   convertToBanglaDate,
+  convertToEnglishDate,
   convertToArabicDate,
   convertToIndianDate,
   convertToJapaneseDate,
@@ -138,7 +142,8 @@ import {
 } from "local-date-kit";
 
 const bangla = convertToBanglaDate("2026-04-04", { language: "bn" });
-const hijri = convertToArabicDate("2026-04-04", { language: "bn" });
+const english = convertToEnglishDate("2026-04-08", "bn");
+const hijri = convertToArabicDate("2026-04-08", { language: "bn" });
 const indian = convertToIndianDate("2026-04-14", { language: "hi" });
 const japanese = convertToJapaneseDate("2026-04-14", { language: "ja" });
 const thai = convertToThaiDate("2026-04-14", { language: "th" });
@@ -161,6 +166,7 @@ The package uses language codes instead of a special `native` mode.
 Common examples:
 
 - Bangla calendar: `en`, `bn`
+- English calendar: `en`, `bn`, `ar`, `hi`, `ja`, `th`, `zh-TW`
 - Islamic calendar: `en`, `bn`, `ar`
 - Indian calendar: `en`, `bn`, `hi`
 - Japanese calendar: `en`, `bn`, `ja`
@@ -169,13 +175,20 @@ Common examples:
 
 If a language code is not mapped for a calendar, the package falls back to `en`.
 
+You can pass the language either as an options object or as a shorthand string:
+
+```ts
+convertDate(new Date(), "english", "bn").year;
+convertDate(new Date(), "english", { language: "bn" }).year;
+```
+
 ### Bangladesh-Facing Example
 
 ```ts
 import { convertDate } from "local-date-kit";
 
 const bangla = convertDate("2026-04-04", "bangla", { language: "bn" });
-const hijri = convertDate("2026-04-04", "islamic", { language: "bn" });
+const hijri = convertDate("2026-04-08", "islamic", { language: "bn" });
 ```
 
 Expected style of output:
@@ -188,7 +201,7 @@ Expected style of output:
 }
 
 {
-  day: "১৫",
+  day: "১৯",
   month: "শাওয়াল",
   year: "১৪৪৭"
 }
@@ -235,9 +248,10 @@ Examples:
 
 ```ts
 convertDate(new Date(), "bangla");
+convertDate(new Date(), "english", "bn");
 convertDate("2026-04-14", "bangla");
 convertDate("2026-04-14T10:30:00Z", "japanese");
-convertDate("2026-04-04", "islamic", { language: "bn" });
+convertDate("2026-04-08", "islamic", "bn");
 ```
 
 ### ISO Date Parsing
@@ -257,8 +271,10 @@ import type {
   ArabicDate,
   BanglaDate,
   CalendarConverter,
+  ConvertOptionInput,
   ConvertOptions,
   DateInput,
+  EnglishDate,
   IndianDate,
   JapaneseDate,
   LocalCalendarDate,
@@ -285,7 +301,7 @@ const result: BanglaDate = convertToBanglaDate("2026-04-04", { language: "bn" })
 convertDate(
   input: Date | string,
   calendar: SupportedCalendar,
-  options?: { language?: string }
+  options?: { language?: string } | string
 )
 ```
 
@@ -313,12 +329,12 @@ isSupportedCalendar(value: string): boolean
 import { convertDate } from "local-date-kit";
 
 const banglaDate = convertDate("2026-04-04", "bangla", { language: "bn" });
-const hijriDate = convertDate("2026-04-04", "islamic", { language: "bn" });
+const hijriDate = convertDate("2026-04-08", "islamic", { language: "bn" });
 
 const label = `${banglaDate.day} ${banglaDate.month} ${banglaDate.year}, ${hijriDate.day} ${hijriDate.month} ${hijriDate.year}`;
 
 console.log(label);
-// ২১ চৈত্র ১৪৩২, ১৫ শাওয়াল ১৪৪৭
+// ২১ চৈত্র ১৪৩২, ১৯ শাওয়াল ১৪৪৭
 ```
 
 ## Calendar Notes
