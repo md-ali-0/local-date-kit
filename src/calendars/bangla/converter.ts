@@ -34,14 +34,14 @@ export function convertToBanglaDate(input: DateInput, options?: ConvertOptionInp
 
   let banglaYear = year - 593;
 
-  if (month < 4 || (month === 4 && day < 15)) {
+  if (month < 4 || (month === 4 && day < 14)) {
     banglaYear -= 1;
   }
 
-  let baseDate = new Date(Date.UTC(year, 3, 15));
+  let baseDate = new Date(Date.UTC(year, 3, 14));
 
   if (utcDate < baseDate) {
-    baseDate = new Date(Date.UTC(year - 1, 3, 15));
+    baseDate = new Date(Date.UTC(year - 1, 3, 14));
   }
 
   const diffTime = utcDate.getTime() - baseDate.getTime();
