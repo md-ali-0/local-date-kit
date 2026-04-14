@@ -8,7 +8,7 @@ const MONTHS = [
   { en: "Ashar", native: "আষাঢ়", days: 31 },
   { en: "Srabon", native: "শ্রাবণ", days: 31 },
   { en: "Bhadro", native: "ভাদ্র", days: 31 },
-  { en: "Ashwin", native: "আশ্বিন", days: 30 },
+  { en: "Ashwin", native: "আশ্বিন", days: 31 },
   { en: "Kartik", native: "কার্তিক", days: 30 },
   { en: "Agrahayan", native: "অগ্রহায়ণ", days: 30 },
   { en: "Poush", native: "পৌষ", days: 30 },
