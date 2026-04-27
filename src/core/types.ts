@@ -16,6 +16,13 @@ export interface LocalCalendarDate {
   month: string;
   year: string;
   yearNumber: number;
+  hour: string;
+  hourNumber: number;
+  minute: string;
+  minuteNumber: number;
+  second: string;
+  secondNumber: number;
+  period: string;
 }
 
 export interface CalendarConverter<TDate extends LocalCalendarDate = LocalCalendarDate> {

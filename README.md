@@ -18,23 +18,25 @@ It is designed for apps that need:
 - Japanese calendar support
 - Thai Buddhist calendar support
 - ROC calendar support
-- localized month, day, and year strings
+- localized month, day, year, hour, minute, and second strings
+- descriptive day periods (e.g., Morning, Afternoon, Evening, Night) in multiple languages
 
 ## Highlights
 
 - One generic `convertDate()` API for all supported calendars
 - Direct calendar-specific converter functions
 - Language-code based output such as `en`, `bn`, `ar`, `hi`, `ja`, `th`, and `zh-TW`
-- Localized digits for `day` and `year`
-- Raw numeric values via `dayNumber` and `yearNumber`
+- Localized digits for `day`, `year`, `hour`, `minute`, and `second`
+- Descriptive period support for all languages (e.g., `বিকেল` for Bengali, `Evening` for English)
+- Raw numeric values via `dayNumber`, `yearNumber`, `hourNumber`, etc.
 - Safe parsing for bare ISO input like `"2026-04-14"`
 - Structured output that works well in UI rendering
 
 ## Best For
 
-- news sites that show Bangla date alongside Hijri date
+- news sites that show Bangla date alongside Hijri date and time
 - dashboard widgets and calendars
-- Bengali-language products that need localized numerals
+- Bengali-language products that need localized numerals and periods
 - apps that need one data shape across multiple calendars
 
 ## Installation
@@ -54,7 +56,9 @@ npm install local-date-kit
 ```ts
 import { convertDate } from "local-date-kit";
 
-const banglaDate = convertDate("2026-04-04", "bangla", { language: "bn" });
+// April 6, 2026, 5:59 PM
+const date = new Date(2026, 3, 6, 17, 59);
+const banglaDate = convertDate(date, "bangla", { language: "bn" });
 
 console.log(banglaDate);
 ```
@@ -67,11 +71,18 @@ Example output:
   calendar: "bangla",
   nativeName: "Bangabda",
   language: "bn",
-  day: "২১",
-  dayNumber: 21,
+  day: "২৩শে",
+  dayNumber: 23,
   month: "চৈত্র",
   year: "১৪৩২",
-  yearNumber: 1432
+  yearNumber: 1432,
+  hour: "৫",
+  hourNumber: 17,
+  minute: "৫৯",
+  minuteNumber: 59,
+  second: "০০",
+  secondNumber: 0,
+  period: "বিকেল"
 }
 ```
 
@@ -83,6 +94,7 @@ Most date libraries give you a Gregorian-first workflow.
 
 - local calendar output
 - language-aware display values
+- descriptive time periods (Morning/Afternoon/Evening/Night)
 - frontend-friendly result objects
 - Bangladesh-facing Bangla and Hijri expectations
 
@@ -113,19 +125,15 @@ console.log(listSupportedCalendars());
 ```ts
 import { convertDate } from "local-date-kit";
 
-const bangla = convertDate("2026-04-04", "bangla", { language: "bn" });
-const english = convertDate("2026-04-08", "english", "bn");
-const hijri = convertDate("2026-04-08", "islamic", { language: "bn" });
-const indian = convertDate("2026-04-14", "indian", { language: "hi" });
-const japanese = convertDate("2026-04-14", "japanese", { language: "ja" });
-const thai = convertDate("2026-04-14", "buddhist", { language: "th" });
-const roc = convertDate("2026-04-14", "roc", { language: "zh-TW" });
+const bangla = convertDate("2026-04-06T17:59:00", "bangla", { language: "bn" });
+const english = convertDate("2026-04-06T17:59:00", "english", "bn");
 ```
 
 You can render these values directly in UI:
 
 ```ts
-const label = `${bangla.day} ${bangla.month} ${bangla.year}`;
+const label = `${bangla.day} ${bangla.month} ${bangla.year} | ${bangla.period} ${bangla.hour}:${bangla.minute}`;
+// ২৩শে চৈত্র ১৪৩২ | বিকেল ৫:৫৯
 ```
 
 ### Direct Converter Functions
@@ -141,8 +149,8 @@ import {
   convertToTaiwanDate,
 } from "local-date-kit";
 
-const bangla = convertToBanglaDate("2026-04-04", { language: "bn" });
-const english = convertToEnglishDate("2026-04-08", "bn");
+const bangla = convertToBanglaDate("2026-04-14", { language: "bn" });
+const english = convertToEnglishDate("2026-04-06T17:59:00", "bn");
 const hijri = convertToArabicDate("2026-04-08", { language: "bn" });
 const indian = convertToIndianDate("2026-04-14", { language: "hi" });
 const japanese = convertToJapaneseDate("2026-04-14", { language: "ja" });
@@ -187,21 +195,21 @@ convertDate(new Date(), "english", { language: "bn" }).year;
 ```ts
 import { convertDate } from "local-date-kit";
 
-const bangla = convertDate("2026-04-04", "bangla", { language: "bn" });
-const hijri = convertDate("2026-04-08", "islamic", { language: "bn" });
+const bangla = convertDate("2026-04-14", "bangla", { language: "bn" });
+const hijri = convertDate("2026-04-14", "islamic", { language: "bn" });
 ```
 
 Expected style of output:
 
 ```ts
 {
-  day: "২১",
-  month: "চৈত্র",
-  year: "১৪৩২"
+  day: "১লা",
+  month: "বৈশাখ",
+  year: "১৪৩৩"
 }
 
 {
-  day: "১৯",
+  day: "২৬",
   month: "শাওয়াল",
   year: "১৪৪৭"
 }
@@ -222,6 +230,13 @@ type LocalCalendarDate = {
   month: string;
   year: string;
   yearNumber: number;
+  hour: string;
+  hourNumber: number;
+  minute: string;
+  minuteNumber: number;
+  second: string;
+  secondNumber: number;
+  period: string;
 };
 ```
 
@@ -231,11 +246,18 @@ type LocalCalendarDate = {
 - `calendar`: internal calendar key
 - `nativeName`: familiar calendar name
 - `language`: resolved output language
-- `day`: localized day string
+- `day`: localized day string (includes suffixes like `লা`, `শে` for Bangla)
 - `dayNumber`: raw numeric day
 - `month`: localized month name
 - `year`: localized year string
 - `yearNumber`: raw numeric year
+- `hour`: localized hour string (12-hour format)
+- `hourNumber`: raw numeric hour (0-23)
+- `minute`: localized minute string (2-digit)
+- `minuteNumber`: raw numeric minute
+- `second`: localized second string (2-digit)
+- `secondNumber`: raw numeric second
+- `period`: localized descriptive period (e.g., Morning/Afternoon/Evening/Night)
 
 ## Input
 

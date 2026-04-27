@@ -1,5 +1,5 @@
 import type { CalendarConverter, ConvertOptionInput, DateInput } from "../../core/types.js";
-import { isLeapYear, normalizeConvertOptions, parseInputDate, toLocalizedDigits, toUTCDate } from "../../core/utils.js";
+import { getDayPeriod, isLeapYear, normalizeConvertOptions, parseInputDate, toLocalizedDigits, toUTCDate } from "../../core/utils.js";
 import type { BanglaDate } from "./types.js";
 
 const MONTHS = [
@@ -13,7 +13,7 @@ const MONTHS = [
   { en: "Agrahayan", native: "অগ্রহায়ণ", days: 30 },
   { en: "Poush", native: "পৌষ", days: 30 },
   { en: "Magh", native: "মাঘ", days: 30 },
-  { en: "Falgun", native: "ফাল্গুন", days: 0 },
+  { en: "Falgun", native: "ফালগুন", days: 0 },
   { en: "Chaitra", native: "চৈত্র", days: 30 },
 ] as const;
 
@@ -31,6 +31,17 @@ export function convertToBanglaDate(input: DateInput, options?: ConvertOptionInp
   const day = utcDate.getUTCDate();
   const month = utcDate.getUTCMonth() + 1;
   const year = utcDate.getUTCFullYear();
+
+  // Time components from original date (local time)
+  const hourNumber = date.getHours();
+  const minuteNumber = date.getMinutes();
+  const secondNumber = date.getSeconds();
+  const period = getDayPeriod(hourNumber, language);
+
+  const hour12 = hourNumber % 12 || 12;
+  const hour = toLocalizedDigits(hour12, language);
+  const minute = toLocalizedDigits(minuteNumber, language).padStart(2, toLocalizedDigits(0, language));
+  const second = toLocalizedDigits(secondNumber, language).padStart(2, toLocalizedDigits(0, language));
 
   let banglaYear = year - 593;
 
@@ -57,16 +68,34 @@ export function convertToBanglaDate(input: DateInput, options?: ConvertOptionInp
 
   for (const monthDef of months) {
     if (remainingDays < monthDef.days) {
+      const banglaDayNumber = remainingDays + 1;
+      let banglaDay = toLocalizedDigits(banglaDayNumber, language);
+
+      if (language === "bn") {
+        if (banglaDayNumber === 1) banglaDay += "লা";
+        else if (banglaDayNumber === 2 || banglaDayNumber === 3) banglaDay += "রা";
+        else if (banglaDayNumber === 4) banglaDay += "ঠা";
+        else if (banglaDayNumber >= 5 && banglaDayNumber <= 18) banglaDay += "ই";
+        else if (banglaDayNumber >= 19) banglaDay += "শে";
+      }
+
       return {
         country: "Bangladesh",
         calendar: "bangla",
         nativeName: "Bangabda",
         language,
-        day: toLocalizedDigits(remainingDays + 1, language),
-        dayNumber: remainingDays + 1,
+        day: banglaDay,
+        dayNumber: banglaDayNumber,
         month: monthDef[language === "bn" ? "native" : "en"],
         year: toLocalizedDigits(banglaYear, language),
         yearNumber: banglaYear,
+        hour,
+        hourNumber,
+        minute,
+        minuteNumber,
+        second,
+        secondNumber,
+        period,
       };
     }
 
